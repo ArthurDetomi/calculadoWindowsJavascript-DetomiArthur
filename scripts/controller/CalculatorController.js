@@ -5,6 +5,7 @@ class CalculatorCcontroller{
         this._operation = [];
         this._lastOperator = "";
         this._lastNumber = "";
+        this._displayHistoryOperation = document.getElementById("operation");
         this._displayCalcEl = document.getElementById("display");
         this.initialize();
       
@@ -15,6 +16,16 @@ class CalculatorCcontroller{
         this.initButtonsEvents();
     }
     //seters and geters
+    get historyOperation()
+    {
+        return this._displayHistoryOperation.innerHTML;
+    }
+
+    set historyOperation(value)
+    {
+        this._displayHistoryOperation.innerHTML = value;
+    }
+
     get lastNumber()
     {
         return this._lastNumber;
@@ -42,7 +53,17 @@ class CalculatorCcontroller{
 
     set displayCalc(value)
     {
-        this._displayCalcEl.innerHTML = value;
+        let aux = value.toString().replace(".",",");
+        if(value.toString().length > 11 ){
+            
+            this.setError();
+            return false;
+
+        }else{
+
+            this._displayCalcEl.innerHTML = aux;
+
+        }
     }
     //metodos
     addEventListenerAll(el, events, fn)
@@ -61,6 +82,7 @@ class CalculatorCcontroller{
 
                 this.executeButtons(btn.innerHTML);
                 console.log(this._operation);
+                this.createhistoryOperation();
 
             });
 
@@ -78,57 +100,66 @@ class CalculatorCcontroller{
     executeButtons(btn)
     {
         if(["0","1","2","3","4","5","6","7","8","9"].indexOf(btn) > -1){
+            if(this.displayCalc.length < 11 || this.displayCalc == "0" || this.displayCalc == 0){
 
-            if(!this.getLastTermOfArray()){
+                if(!this.getLastTermOfArray()){
 
-                this.displayCalc = btn;
-                this.operationPush(btn);
+                    this.displayCalc = btn;
+                    this.operationPush(btn);
 
-            }else if(parseFloat(this.getLastTermOfArray()) > 0){
+                }else if(parseFloat(this.getLastTermOfArray()) > 0 || this.verifyDot()){
 
-                this._operation[this._operation.length - 1] = this._operation[this._operation.length - 1] + btn;
-                this.displayCalc = this._operation[this._operation.length - 1];
+                    this._operation[this._operation.length - 1] = this._operation[this._operation.length - 1] + btn;
+                    this.displayCalc = this._operation[this._operation.length - 1];
 
-            }else{
+                }else{
 
-                this.displayCalc = btn;
-                this.operationPush(btn);
+                    this.displayCalc = btn;
+                    this.operationPush(btn);
 
+                }
             }
 
         }else{
 
             switch(btn){
                 case "+":
-                    this.addBasicOperation(btn);
-                break;
-
                 case "-":
-                    this.addBasicOperation(btn);
-                break;
-
                 case "X":
-                    this.addBasicOperation("*");
-                break;
-
-                case "÷":
-                    this.addBasicOperation("/");
+                case "÷":   
+                    if(this.verifyDisplayCalc()) this.addBasicOperation(btn);
                 break;
 
                 case "x²":
-                    this.addEspecialOperation("**");
+                    if(this.verifyDisplayCalc()) this.addEspecialOperation("**");
                 break;
 
                 case "√":
-                    this.addEspecialOperation("raiz");
+                    if(this.verifyDisplayCalc()) this.addEspecialOperation("raiz");
                 break;
 
                 case "¹/x":
-                    this.addEspecialOperation("1/x");
+                    if(this.verifyDisplayCalc()) this.addEspecialOperation("1/x");
+                break;
+
+                case "±":
+                    if(this.verifyDisplayCalc()) this.addEspecialOperation("±");
+                break;
+
+                case "%":
+                    if(this.verifyDisplayCalc()) this.addEspecialOperation("%");
                 break;
 
                 case "=":
-                    this.calc();
+                    if(this.verifyDisplayCalc()) this.calc();
+                break;
+
+                case "←":
+                    if(this.verifyDisplayCalc()) this.execBackspace();
+                break;
+
+                case ",":
+                    this.addDot();
                 break;
 
                 case "C":
@@ -143,10 +174,22 @@ class CalculatorCcontroller{
         }
     }
 
+    verifyDisplayCalc()
+    {
+        if(!this.getLastTermOfArray() ||  !this.displayCalc){
+
+            return false;
+
+        }else{
+
+            return true;
+        
+        }
+    }
+
     addBasicOperation(op)
     {
-
-        if(["+","-","*","/"].indexOf(this.getLastTermOfArray()) > -1){
+        if(["+","-","*","/"].indexOf(this.getLastTermOfArray()) > -1 && this.verifyDisplayCalc()){
 
             this._operation[this._operation.length - 1] = op;
 
@@ -161,28 +204,83 @@ class CalculatorCcontroller{
     }
 
     addEspecialOperation(operator)
-    {
-        if(operator == "**" || operator == "raiz" || operator == "1/x"){
-            if(!isNaN(this.getLastTermOfArray())){
-                if(operator == "**"){
+    {   
+        if(["**","raiz","1/x","±","%"].indexOf(operator) > -1){ //verifica se o operador é um desses
+            if(!isNaN(this.getLastTermOfArray())){ //verifica se o ultimo termo do array é um numero
+                if(operator == "**"){ //eleva ao quadrado
                     
                     let op = parseFloat(this.getLastTermOfArray())**2;
                     this.setLastTermOfArray(op);
                     this.displayCalc = this.getLastTermOfArray();
 
-                }else if(operator == "raiz"){
+                }else if(operator == "raiz"){ //raiz quadrada
 
                     let op = Math.sqrt(parseFloat(this.getLastTermOfArray()));
                     this.setLastTermOfArray(op);
                     this.displayCalc = this.getLastTermOfArray();
 
-                }else { // caso for 1/x
+                }else if(operator == "1/x"){ // caso for 1/x
 
                     let op = 1 / parseFloat(this.getLastTermOfArray());
                     this.setLastTermOfArray(op);
                     this.displayCalc = this.getLastTermOfArray();
 
+                }else if(operator == "±" && this.getLastTermOfArray() != "0"){ //muda de + para -
+
+                    let op = parseFloat(this.getLastTermOfArray()) * -1;
+                    this.setLastTermOfArray(op);
+                    this.displayCalc = this.getLastTermOfArray();
+
+                }else if(operator == "%"){
+
+                    if(this._operation.length >= 2){ //verifica o tamanho da operação >= 2 
+
+                        let op = parseFloat(this._operation[0]) * (parseFloat(this.getLastTermOfArray()) / 100);
+                        this.setLastTermOfArray(op);
+                        this.displayCalc = op;
+
+                    }else{ //se for tamanho 1
+
+                        this.operationPop();
+                        this.displayCalc = "0";
+
+                    }
+
                 }
+            }else{ //é um sinal o ultimo termo
+
+                if(operator == "**"){ //eleva ao quadrado
+                    
+                    let op = parseFloat(this._operation[0]) ** 2;
+                    this.operationPush(op);
+                    this.displayCalc = op;
+
+                }else if(operator == "raiz"){ //raiz quadrada
+
+                    let op = Math.sqrt(parseFloat(this._operation[0]));
+                    this.operationPush(op);
+                    this.displayCalc = op;
+
+                }else if(operator == "1/x"){ // caso for 1/x
+
+                    let op = 1 / parseFloat(this._operation[0]);
+                    this.operationPush(op);
+                    this.displayCalc = op;
+
+                }else if(operator == "±"){ //muda de +/- ou -/+
+
+                    let op = parseFloat(this._operation[0]) * -1;
+                    this.operationPush(op);
+                    this.displayCalc = op;
+
+                }else if(operator == "%"){ //caso for %
+
+                    let op = parseFloat(this._operation[0]) * (parseFloat(this._operation[0]) / 100);
+                    this.operationPush(op);
+                    this.displayCalc = op;
+
+                }
+
             }
         }
     }
@@ -196,13 +294,16 @@ class CalculatorCcontroller{
 
         }
         if(this._operation.length >= 3){
+            this.historyOperation += "="; //adiciona um = no historico
+
             let operator = this._operation.join("");
-            console.log(operator);
-            this.displayCalc = eval(operator);
+            let aux = operator.toString().replaceAll(",",".");
+            console.log(aux);
+            this.displayCalc = eval(aux);
             this.lastOperator = this._operation[this._operation.length - 2];
             this.lastNumber = this._operation[this._operation.length - 1];
             this._operation = [];
-            this._operation.push(this.displayCalc);
+            this.operationPush(this.displayCalc);
         }
         
     }
@@ -229,12 +330,107 @@ class CalculatorCcontroller{
     clearAll()
     {
         this._operation = [];
-        this.displayCalc = 0;
+        this.displayCalc = "0";
+        this.createhistoryOperation(false);
+    }
+
+    execBackspace()
+    {
+
+        if(!isNaN(this.getLastTermOfArray()) || this.verifyDot()){ //tem que ser um numero
+
+            if(this.getLastTermOfArray().length == 1){
+
+                this.operationPop();
+                this.displayCalc = "0";
+
+            }else{
+
+                let newValue = this.getLastTermOfArray().split("");
+                newValue.pop();
+                newValue = newValue.join("");
+                this.setLastTermOfArray(newValue);
+                this.displayCalc = newValue;
+                
+
+            }
+
+        }
+
+    }
+
+    addDot()
+    {
+        let comparation = "";
+        if(this.displayCalc != 0 || this.displayCalc != "0") comparation = this.displayCalc.split("");
+        if(isNaN(this.getLastTermOfArray()) || !this.getLastTermOfArray()){
+            
+            this.operationPush("0.");
+            this.displayCalc = "0,";
+            
+        }else if(comparation || comparation.indexOf(",") < 0 || comparation.indexOf(".") < 0){//se for um numero e já estiver definido e se a virgula já não existe
+
+            let currentValue = this.getLastTermOfArray().toString();
+            currentValue += ",";
+            this.operationPop();
+            this.operationPush(currentValue);
+            this.displayCalc = currentValue;
+
+        }
+    }
+
+    verifyDot()
+    {
+        let aux = "";
+        if(this.getLastTermOfArray()){
+
+            aux = this.getLastTermOfArray().split("");
+            if(aux.indexOf(",") > -1 || aux.indexOf(".") > -1){
+
+                return true;
+
+            }else{
+
+                return false;
+
+            }
+
+        }else{
+
+            return false;
+        }
+    }
+
+    createhistoryOperation(notClear = true)
+    {
+        if(notClear){
+            let auxText = "";
+            if(this._operation.length >= 2){
+                this.historyOperation = "";
+
+                auxText = this._operation.join("");
+                auxText = auxText.replaceAll(".",",");
+                auxText = auxText.replaceAll("*","x");
+                auxText = auxText.replaceAll("/","÷");
+                this.historyOperation = auxText;
+
+            }
+        }else{ //limpar tudo
+
+            this.historyOperation = "";
+
+        }
     }
 
     operationPush(value)
     {
         this._operation.push(value);
+        this.createhistoryOperation();
+    }
+
+    operationPop()
+    {
+        this._operation.pop();
     }
 
     getLastTermOfArray()
@@ -247,7 +443,10 @@ class CalculatorCcontroller{
         this._operation[this._operation.length - 1] = value;
     }
 
-    
+    setError()
+    {
+        this.displayCalc = "ERROR";
+    }
 
 
 
