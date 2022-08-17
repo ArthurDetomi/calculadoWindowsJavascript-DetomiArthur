@@ -1,49 +1,7 @@
-<!--                                                                                               
-                                                                                                    
-                                       /-`      -//-      ```                                       
-                                       /+/.`    -++:.   `.///                                       
-                            .--`       /+++:   -:++++`  :+++/       `--.                            
-                            /++:-      /+++/:``++++++``:/+++/      -:++/                            
-                            :/+++////-`++++++.`++++++`.++++++`-////+++/:                            
-                    ````` ``.-++++++++/++++++//++++++//++++++/++++++++.`   `````                    
-                    .:+++-:+++++++++++++++++++++++++++++++++++++++++++:----++++:                    
-                     `/+++:./+++++++++++++++++++++++++++++++++++++++++++++++++-.                    
-                  `//:.:++//++++++++++++++++++++++++++++++++++++++++++++++++++///`                  
-                  `+++/++++++++++++++++++++++++++++++++++++++++++++++++++++++++++`                  
-           -------:++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++:-----`            
-           .:/++++//-..:+///+++++++/////////.................//////+++++////:.///+++++/-            
-          ```.++/-../+++o..`//+///-`........````:++++++++++-`.....`/////`...``...://++.```          
-        .:++++:-.+oooooooo/. `:-....ooooooooooooooooooooooooooooo/...   ./ooooooo-. :+++++:.        
-       `++++++ -oooooooooooo``:+oooooooooooooooooooooooooooooooooooo+:``ooooooooooo:--++++/-`       
-       `./++:./+oooooooooo/-/+oooooooooooooooooooooooooooooooooooooooo+/-/oooooooooo-`++++:         
-     `://+++- ooooooooooo`-+oooooooooooooooooooooooooooooooooooooooooooo+:.oooooooooo+`-+++//:`     
-    .+++++++- ooooooooo+/.:oooooooooooooooooooooooooooooooooooooooooooooooo -ooooooooo -+++++++.    
-    .+++++++:-:/ooooooo- oooooooooooooooooooooooooooooooooooooooooooooooooo:::oooooo/:-:+++++++.    
-   :/+++++++++ -oooooo.:/ooooooooooooooo/..-oooooooooooo-../oooooooooooooooo: +ooooo- +++++++++/:   
-   ://++++++++/:`/+++/ :oooooooooooooooooooooooooooooooooooooooooooooooooooo: /+++/`:/++++++++//:   
-      :++++++++++-..`  :oooooooooooooooooooooooooooooooooooooooooooooooooooo:  `..-++++++++++:      
-      :+++++++++++++:- :oooooooooooooooooooooooooooooooooooooooooooooooooooo: -:+++++++++++++:      
-    `:/++++++++++++++/ :oooooooooooooooooooooooooooooooooooooooooooooooooooo: /++++++++++++++/:`    
-   ::///+++++++++++++/ :oooooooooooooooooooooooo+++++oooooooooooooooooooooo+:`/+++++++++++/////::   
-       `:::++++++++++/.:/oooooooooooooooooooo+//:----/+oooooooooooooooooooo -/+++++++++/::-         
-           -:++++++++++- oooooooooooooooooo+-:::+oooo::-+oooooooooooooooo/--:+++++++++-`            
-            `./++++++++/:.:oooooooooooooooo/ /oooooooo/ .-ooooooooooooooo- +++++++++-`              
-              `./++++++++```/+ooooooooooooo+`:++ooooo+:`/+oooooooooooo+/.:/++++++++/.               
-                 -:++++++/:.`./oooooooooooooo:--:////-:oooooooooooooo/.`/++++++++:-                 
-                  `-/+++++++:. .:ooooooooooooooo/::::ooooooooooooooo/ .:++++++---`                  
-                    ```://////:.`./ooooooooooooooooooooooooooooooo+-.://///```                      
-                        `````./:- ``+ooooooooooooooooooooooooooo+:`  ``````                         
-                                     ./oooooooooooooooooooooo///`                                   
-                                       ---+oooooooooooooooo/-                                       
-                                          .-ooooooooooooo+.`                                        
-                                            `:++++ooo+++.`                                          
-                                                  ///`                                              
-                                                                                                    
--->
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="author" content="Hcode Treinamentos">
+    <meta name="author" content="Arthur Detomi">
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Calculadora</title>
@@ -94,6 +52,18 @@
         font-size: 48px;
         font-weight: 600;
     }
+
+    #operation {
+        color: gray;
+        text-align: right;
+        position: absolute;
+        bottom: 60px;
+        width: 100%;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+
     .btn-number {
         background-color: #EFEFEF;
         font-size: 24px;
@@ -110,10 +80,13 @@
     </style>
 </head>
 <body>
-    
     <div class="center">
         <div id="calculadora">
             <header>
+                <div id="operation">
+                    <!--Futura posição-->
+                </div>
+
                 <div id="display">
                     0
                 </div>
@@ -158,6 +131,8 @@
             </section>
         </div>
     </div>
-
+    <script src="scripts/controller/CalculatorController.js"></script>
+    <script src="scripts/calculator.js"></script>
+    <script></script>
 </body>
 </html>
