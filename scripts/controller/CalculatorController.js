@@ -13,10 +13,12 @@ class CalculatorCcontroller{
       
     }
 
-    initialize()
+    initialize() //inicializa os metodos assim que se inicia
     {
-        this.initButtonsEvents();
-        document.querySelectorAll("#btn-ce").forEach(btn=>{
+        this.initButtonsEvents(); //inicia os eventos dos botões
+        this.initKeyboard();
+        this.pasteFromDisplayCalc();
+        document.querySelectorAll("#btn-ce").forEach(btn=>{ //ativa o evento de ligar e desligar som
             btn.addEventListener("dblclick", e=>{
                 this.toggleAudio();
             });
@@ -74,7 +76,7 @@ class CalculatorCcontroller{
     set displayCalc(value)
     {
         let aux = value.toString().replace(".",",");
-        if(value.toString().length > 11 ){
+        if(value.toString().length > 11 ){ //verifica se o valor da conta ultrapassou 11 digitos
             
             this.setError();
             return false;
@@ -86,14 +88,14 @@ class CalculatorCcontroller{
         }
     }
     //metodos
-    addEventListenerAll(el, events, fn)
+    addEventListenerAll(el, events, fn) //adiciona varios eventos a um elemento
     {
         events.split(" ").forEach(event=>{
             el.addEventListener(event, fn, false);
         })
     }
 
-    initButtonsEvents(){
+    initButtonsEvents(){ //inicia eventos dos botões
         let buttons = document.querySelectorAll(".container > .row > button");
         
         buttons.forEach((btn,index)=>{
@@ -448,6 +450,64 @@ class CalculatorCcontroller{
         }
     }
 
+    initKeyboard()
+    {
+        document.addEventListener("keyup", e=>{
+            this.playAudio();
+            if(["0","1","2","3","4","5","6","7","8","9"].indexOf(e.key) > -1){
+
+                this.executeButtons(e.key);
+
+            }
+
+            switch(e.key){
+                case "+":
+                case "-":
+                    if(this.verifyDisplayCalc()) this.addBasicOperation(e.key);
+                break;
+
+                case "*":
+                    if(this.verifyDisplayCalc()) this.addBasicOperation("*");
+                break;
+
+                case "/":   
+                    if(this.verifyDisplayCalc()) this.addBasicOperation("/");
+                break;
+
+                case "%":
+                    if(this.verifyDisplayCalc()) this.addEspecialOperation("%");
+                break;
+
+                case "Enter":
+                case "=":
+                    if(this.verifyDisplayCalc()) this.calc();
+                break;
+
+                case "Backspace":
+                    if(this.verifyDisplayCalc()) this.execBackspace();
+                break;
+
+                case ",":
+                    this.addDot();
+                break;
+
+                case "Escape":
+                    this.clearAll();
+                break;
+
+                case "Delete":
+                    this.clearEntry();
+                break
+
+                case "c":
+                if(e.ctrlKey) this.copyResultOperation();
+                break;
+            }
+            this.createhistoryOperation();
+        });
+
+    }
+
     operationPush(value)
     {
         this._operation.push(value);
@@ -472,6 +532,25 @@ class CalculatorCcontroller{
     setError()
     {
         this.displayCalc = "ERROR";
+    }
+
+    pasteFromDisplayCalc()
+    {
+        document.addEventListener("paste",e=>{
+            let text = e.clipboardData.getData("Text");
+            text = text.toString().replace(",",".");
+            if(!isNaN(text)){ //verifica se é um numero que está sendo colado
+
+                this.operationPush(text);
+                this.displayCalc = text;
+                
+            }
+        });
+    }
+
+    copyResultOperation()
+    {
+        navigator.clipboard.writeText(this.displayCalc); //copia o valor atual da calculadora
     }
 
 }
