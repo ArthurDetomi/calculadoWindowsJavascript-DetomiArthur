@@ -25,12 +25,12 @@ class CalculatorCcontroller{
         });
     }
     //metodos de audio
-    toggleAudio()
+    toggleAudio() //desliga ou liga o audio
     {
         this._audioOnOff = (this._audioOnOff) ? false:true;
     }
 
-    playAudio()
+    playAudio() //dá play ao audio
     {
         if(this._audioOnOff){
             this._audio.currentTime = 0;
@@ -119,7 +119,7 @@ class CalculatorCcontroller{
 
     }
 
-    executeButtons(btn)
+    executeButtons(btn) //executa os botões
     {
         this.playAudio();
         if(["0","1","2","3","4","5","6","7","8","9"].indexOf(btn) > -1){
@@ -202,7 +202,7 @@ class CalculatorCcontroller{
         }
     }
 
-    verifyDisplayCalc()
+    verifyDisplayCalc() //verifica o display
     {
         if(!this.getLastTermOfArray() ||  !this.displayCalc){
 
@@ -214,8 +214,8 @@ class CalculatorCcontroller{
         
         }
     }
-
-    addBasicOperation(op)
+ 
+    addBasicOperation(op) //adiciona operações básicas a operação atual
     {
         if(["+","-","*","/"].indexOf(this.getLastTermOfArray()) > -1 && this.verifyDisplayCalc()){
 
@@ -231,7 +231,7 @@ class CalculatorCcontroller{
 
     }
 
-    addEspecialOperation(operator)
+    addEspecialOperation(operator) //adiciona operações especiais a operação atual
     {   
         if(["**","raiz","1/x","±","%"].indexOf(operator) > -1){ //verifica se o operador é um desses
             if(!isNaN(this.getLastTermOfArray())){ //verifica se o ultimo termo do array é um numero
@@ -313,7 +313,7 @@ class CalculatorCcontroller{
         }
     }
 
-    calc()
+    calc() //calcula a operação
     {
         if(this._operation.length == 1 && this.lastNumber != ""){
 
@@ -328,8 +328,8 @@ class CalculatorCcontroller{
             let aux = operator.toString().replaceAll(",",".");
             console.log(aux);
             this.displayCalc = eval(aux);
-            this.lastOperator = this._operation[this._operation.length - 2];
-            this.lastNumber = this._operation[this._operation.length - 1];
+            this.lastOperator = this._operation[this._operation.length - 2]; //salva o pernultimo termo do array que é o operador
+            this.lastNumber = this.getLastTermOfArray();
             this._operation = [];
             this.operationPush(this.displayCalc);
         }
@@ -362,7 +362,7 @@ class CalculatorCcontroller{
         this.createhistoryOperation(false);
     }
 
-    execBackspace()
+    execBackspace() //apaga o ultimo numero digitado
     {
 
         if(!isNaN(this.getLastTermOfArray()) || this.verifyDot()){ //tem que ser um numero
@@ -374,11 +374,11 @@ class CalculatorCcontroller{
 
             }else{
 
-                let newValue = this.getLastTermOfArray().split("");
-                newValue.pop();
-                newValue = newValue.join("");
-                this.setLastTermOfArray(newValue);
-                this.displayCalc = newValue;
+                let newValue = this.getLastTermOfArray().split("");//transforma em array
+                newValue.pop();//elimina o ultimo termo do array
+                newValue = newValue.join("");//transforma em String novamente
+                this.setLastTermOfArray(newValue);//seta novamente o novo valor
+                this.displayCalc = newValue; //seta ao display o novo valor
                 
 
             }
@@ -387,10 +387,10 @@ class CalculatorCcontroller{
 
     }
 
-    addDot()
+    addDot() //adiciona virgula ao numero atual do array
     {
         let comparation = "";
-        if(this.displayCalc != 0 || this.displayCalc != "0") comparation = this.displayCalc.split("");
+        if(this.displayCalc != 0 || this.displayCalc != "0") comparation = this.displayCalc.split(""); //transforma em array
         if(isNaN(this.getLastTermOfArray()) || !this.getLastTermOfArray()){
             
             this.operationPush("0.");
@@ -407,7 +407,7 @@ class CalculatorCcontroller{
         }
     }
 
-    verifyDot()
+    verifyDot() //verifica se existe virgula na posição atual do array
     {
         let aux = "";
         if(this.getLastTermOfArray()){
@@ -429,7 +429,7 @@ class CalculatorCcontroller{
         }
     }
 
-    createhistoryOperation(notClear = true)
+    createhistoryOperation(notClear = true) //mostra o historico da operação em cima
     {
         if(notClear){
             let auxText = "";
@@ -450,7 +450,7 @@ class CalculatorCcontroller{
         }
     }
 
-    initKeyboard()
+    initKeyboard() //inicia comandos do teclado
     {
         document.addEventListener("keyup", e=>{
             this.playAudio();
@@ -500,7 +500,7 @@ class CalculatorCcontroller{
                 break
 
                 case "c":
-                if(e.ctrlKey) this.copyResultOperation();
+                if(e.ctrlKey) this.copyResultOperation(); //se foi apertado as teclas ctlr + c
                 break;
             }
             this.createhistoryOperation();
@@ -548,7 +548,7 @@ class CalculatorCcontroller{
         });
     }
 
-    copyResultOperation()
+    copyResultOperation() //copia o resultado atual da calculadora
     {
         navigator.clipboard.writeText(this.displayCalc); //copia o valor atual da calculadora
     }
