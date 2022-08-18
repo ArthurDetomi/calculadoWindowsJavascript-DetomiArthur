@@ -2,6 +2,8 @@ class CalculatorCcontroller{
     constructor()
     {
         //atributos
+        this._audio = new Audio("click.mp3");
+        this._audioOnOff = false;
         this._operation = [];
         this._lastOperator = "";
         this._lastNumber = "";
@@ -14,6 +16,24 @@ class CalculatorCcontroller{
     initialize()
     {
         this.initButtonsEvents();
+        document.querySelectorAll("#btn-ce").forEach(btn=>{
+            btn.addEventListener("dblclick", e=>{
+                this.toggleAudio();
+            });
+        });
+    }
+    //metodos de audio
+    toggleAudio()
+    {
+        this._audioOnOff = (this._audioOnOff) ? false:true;
+    }
+
+    playAudio()
+    {
+        if(this._audioOnOff){
+            this._audio.currentTime = 0;
+            this._audio.play();
+        }
     }
     //seters and geters
     get historyOperation()
@@ -99,6 +119,7 @@ class CalculatorCcontroller{
 
     executeButtons(btn)
     {
+        this.playAudio();
         if(["0","1","2","3","4","5","6","7","8","9"].indexOf(btn) > -1){
             if(this.displayCalc.length < 11 || this.displayCalc == "0" || this.displayCalc == 0){
 
@@ -121,13 +142,18 @@ class CalculatorCcontroller{
             }
 
         }else{
-
             switch(btn){
                 case "+":
                 case "-":
-                case "X":
-                case "÷":   
                     if(this.verifyDisplayCalc()) this.addBasicOperation(btn);
+                break;
+
+                case "X":
+                    if(this.verifyDisplayCalc()) this.addBasicOperation("*");
+                break;
+
+                case "÷":   
+                    if(this.verifyDisplayCalc()) this.addBasicOperation("/");
                 break;
 
                 case "x²":
@@ -447,7 +473,5 @@ class CalculatorCcontroller{
     {
         this.displayCalc = "ERROR";
     }
-
-
 
 }
